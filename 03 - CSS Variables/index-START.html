@@ -9,7 +9,7 @@
 
   <div class="controls">
     <label for="spacing">Spacing:</label>
-    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+    <input id="spacing" type="range" name="spacing" min="10" max="50" value="10" data-sizing="px">
 
     <label for="blur">Blur:</label>
     <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
@@ -21,6 +21,21 @@
   <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
+    :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    img {
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    .hl {
+      color: var(--base);
+    }
 
     /*
       misc styles, nothing to do with CSS variables
@@ -45,7 +60,26 @@
   </style>
 
   <script>
-  </script>
 
+    // Wes used document.documentElement
+    const root = document.querySelector(':root');
+
+    // Returns an object of type NodeList
+    const inputs = document.querySelectorAll('.controls input');
+
+    // forEach was later added to NodeList
+    inputs.forEach(input => input.addEventListener('change', handleUpdate));
+
+    // Watch mouseover to provide better realtime feedback
+    inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
+
+    function handleUpdate(e) {
+      // Use dataset to access data- attributes
+      const suffix = this.dataset.sizing || '';
+
+      // style attribute provides access to the inline styles of the element
+      root.style.setProperty(`--${this.name}`, this.value + suffix);
+    }
+  </script>
 </body>
 </html>

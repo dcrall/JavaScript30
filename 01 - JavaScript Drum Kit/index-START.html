@@ -58,9 +58,46 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  window.addEventListener('keydown', playSound);
 
+  const keys = document.querySelectorAll('.key');
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+
+  function playSound(e) {
+    // Use  template strings to dynamically build selectors
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);     
+    if(!audio) return; // ignore if we don't find an audio file
+
+    // API for <audio> elements
+    audio.currentTime = 0;
+    audio.play();
+
+    // Native interface for adding and removing CSS classes on an element.
+    // key.classList.remove()
+    // key.classList.toggle('class')
+    // key.classList.toggle('class', i < 10) // add conditional
+    // key.classList.contains('class')
+    key.classList.add('playing');
+  }
+
+  function removeTransition(e) {
+    // Events are fired for every property that is being transformed
+    if(e.propertyName !== 'transform') return;
+
+    // Target the end transform events
+    // Interesting use of this. My first inclination is to use e.target
+    this.classList.remove('playing');
+  }
+
+  /**
+   * The Document method querySelector() returns the first Element within the document 
+   * that matches the specified selector, or group of selectors. If no matches are found, 
+   * null is returned. 
+   * 
+   * The Document method querySelectorAll() returns a static (not live) NodeList representing 
+   * a list of the document's elements that match the specified group of selectors.
+  **/
 </script>
-
-
 </body>
 </html>

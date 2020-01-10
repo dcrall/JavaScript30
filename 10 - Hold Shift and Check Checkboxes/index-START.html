@@ -96,6 +96,30 @@
   </div>
 
 <script>
+  const checkboxes = Array.from(document.querySelectorAll('.inbox input[type="checkbox"]'));
+  checkboxes.forEach(check => check.addEventListener('click', handleCheck));
+
+  let lastChecked = null;
+
+  function handleCheck(e) {
+
+    if(lastChecked != null && e.shiftKey) {
+      const lastIndex = checkboxes.findIndex(check => check === lastChecked);    
+      const currentIndex = checkboxes.findIndex(check => check === this);
+
+      // Wes loops through all the checkboxes every time
+      // Here we sort the indices and slice the checkboxes to get the set we want
+      const range = [lastIndex, currentIndex].sort();
+      const targets = checkboxes.slice(range[0], range[1]+1);
+
+      // Wes is only allowing bulk check. We allow for bulk uncheck as well.
+      targets.forEach(target => target.checked = lastChecked.checked);
+    }
+
+    lastChecked = this;
+  }
 </script>
+
+
 </body>
 </html>

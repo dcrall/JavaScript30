@@ -99,6 +99,13 @@
     padding-top: .8em;
   }
 
+  /*
+    The perspective CSS property determines the distance 
+    between the z=0 plane and the user in order to give a 
+    3D-positioned element some perspective.
+
+    https://developer.mozilla.org/en-US/docs/Web/CSS/perspective
+   */
   nav {
     position: relative;
     perspective: 600px;
@@ -129,6 +136,15 @@
     justify-content: center;
   }
 
+
+  /* 
+    If the position property is absolute, the containing block 
+    is formed by the edge of the padding box of the nearest 
+    ancestor element that has a position value other than static 
+    (fixed, absolute, relative, or sticky).
+    
+    https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_Block
+   */
   .dropdown {
     opacity: 0;
     position: absolute;
@@ -220,6 +236,56 @@
 </style>
 
 <script>
+  let triggers = document.querySelectorAll('.cool li');
+  let background = document.querySelector('.dropdownBackground');
+  let nav = document.querySelector('.top');
+
+  function handleEnter() {
+
+    // .trigger-enter sets display to block
+    this.classList.add('trigger-enter');
+    
+    // .trigger-enter-active is added 150 ms later (if still active)
+    // .tigger-enter-active sets the opacity from 0 to 1
+    // This two step process allows the browser to animate the transition
+    // This 2-step is how React & Angular handle animation
+    setTimeout(() => {
+      if(this.classList.contains('trigger-enter')) {
+        this.classList.add('trigger-enter-active');  
+      }      
+    }, 150);
+
+    // Set the backgrounds opacity to 1
+    background.classList.add('open');
+
+    // Get dropdown for the active trigger (li)
+    let dropdown = this.querySelector('.dropdown');
+
+    // Calculate coordinates for the nav bar and the active dropdown
+    let navCoords = nav.getBoundingClientRect();
+    let dropdownCoords = dropdown.getBoundingClientRect();
+
+    // Calculate coordinates for the background
+    const coords = {
+      height: dropdownCoords.height,
+      width: dropdownCoords.width,
+      top: dropdownCoords.top - navCoords.top,
+      left: dropdownCoords.left - navCoords.left
+    }
+
+    // Set background styles
+    background.style.setProperty('width', `${coords.width}px`);
+    background.style.setProperty('height', `${coords.height}px`);
+    background.style.setProperty('transform', `translate(${coords.left}px, ${coords.top}px`);
+  }
+
+  function handleLeave() {
+    this.classList.remove('trigger-enter', 'trigger-enter-active');
+    background.classList.remove('open');
+  }
+
+  triggers.forEach(trigger => trigger.addEventListener('mouseenter', handleEnter));
+  triggers.forEach(trigger => trigger.addEventListener('mouseleave', handleLeave));
 </script>
 
 </body>
